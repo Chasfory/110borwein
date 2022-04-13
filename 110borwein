@@ -1,0 +1,120 @@
+#!/usr/bin/python3 -O
+
+import sys
+import csv
+import math
+
+def borwein(data, tmp):
+    k = 0
+
+    if (tmp == 0):
+        return 1
+    while (k <= data):
+        i = (2 * k) + 1
+        res = math.sin(tmp / i)
+        resBis = tmp / i
+        if (k != 0):
+            result *= (res / resBis)
+        else:
+            result = (res / resBis)
+        k += 1
+    return result
+
+def piDiff(dataBis, result):
+    tmp = result - dataBis
+
+    if (tmp >= 0):
+        return tmp
+    else:
+        return -tmp
+
+def midPoint(data):
+    tmp = 0.5
+    tmpBis = 0
+    resultFinish = 0
+
+    while (tmp <= 5000):
+        result = borwein(data, (tmp + tmpBis) / 2)
+        result *= tmp - tmpBis
+        resultFinish += result
+        tmp += 0.5
+        tmpBis += 0.5
+    return resultFinish
+
+def functMidpoint(dataBis, data):
+    resultFinish = midPoint(data)
+
+    dataBis = piDiff(dataBis, resultFinish)
+    print("Midpoint:\nI%.0f = %.10f" % (data, resultFinish))
+    print("diff = %.10f\n" % (dataBis))
+
+def trapeZoidal(data):
+    tmp = 0.5
+    tmpBis = 0
+    result = 0
+    resultFinish = 0
+
+    while (tmp <= 5000):
+        result = borwein(data, tmpBis) + borwein(data, tmp)
+        result *= (tmp - tmpBis) / 2
+        resultFinish += result
+        tmp += 0.5
+        tmpBis += 0.5
+    return resultFinish
+
+def functTrapezoidal(dataBis, data):
+    resultFinish = trapeZoidal(data)
+
+    dataBis = piDiff(dataBis, resultFinish)
+    print("Trapezoidal:\nI%.0f = %.10f" % (data, resultFinish))
+    print("diff = %.10f\n" % (dataBis))
+
+def simpSon(data):
+    tmp = 0.5
+    tmpBis = 0
+    result = 0
+    resultFinish = 0
+
+    while (tmp <= 5000):
+        result = borwein(data, tmpBis) + borwein(data, tmp)
+        result += 4 * borwein(data, (tmpBis + tmp) / 2)
+        result *= (tmp - tmpBis) / 6
+        resultFinish += result
+        tmpBis += 0.5
+        tmp += 0.5
+    return resultFinish
+
+def functSimpson(dataBis, data):
+    resultFinish = simpSon(data)
+
+    dataBis = piDiff(dataBis, resultFinish)
+    print("Simpson:\nI%.0f = %.10f" % (data, resultFinish))
+    print("diff = %.10f" % (dataBis))
+
+def process(data):
+    functMidpoint(((math.pi) / 2), data)
+    functTrapezoidal(((math.pi) / 2), data)
+    functSimpson(((math.pi) / 2), data)
+
+def recupN(numb):
+    tmp = float(numb)
+    data = int(numb)
+    if (data < 0 or data < tmp):
+        return -1
+    return data
+
+def main(argv):
+    data = recupN(argv[0])
+    if (data == -1):
+        return 84
+    process(data)
+
+if __name__ == "__main__":
+    try:
+        if (len(sys.argv) != 2):
+            exit (84)
+        exit (main(sys.argv[1:]))
+    except ValueError:
+        exit(84)
+    except ZeroDivisionError:
+        exit(84)
